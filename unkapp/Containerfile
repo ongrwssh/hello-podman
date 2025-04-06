@@ -1,0 +1,22 @@
+# ビルド用コンテナ
+FROM docker.io/library/python:3.13.2-bookworm as builder
+
+WORKDIR /app
+COPY requirements.txt .
+RUN python3 -m pip install --upgrade pip
+RUN pip3 install -r requirements.txt
+
+
+# 実行用コンテナ
+FROM docker.io/library/python:3.13.2-slim-bookworm
+
+ENV TZ='Asia/Tokyo'
+RUN useradd appuser
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+
+WORKDIR /app
+COPY main.py .
+
+USER appuser
+EXPOSE 8080
+CMD ["python3", "main.py"]

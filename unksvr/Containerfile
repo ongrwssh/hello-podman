@@ -1,0 +1,11 @@
+FROM docker.io/library/node:23.11-bookworm-slim
+
+RUN apt update \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY . /app
+
+CMD ["node", "main.mjs"]
